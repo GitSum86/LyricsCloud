@@ -1,5 +1,7 @@
 Student Names: Peter Wang & Elijah Oliver
+
 Project Title: Lyrics Cloud
+
 ________________________________________
 
 1. Introduction
