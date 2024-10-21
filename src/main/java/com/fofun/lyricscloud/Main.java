@@ -1,4 +1,5 @@
 package com.fofun.lyricscloud;
+import com.kennycason.kumo.*;
 
 public class Main {
 
@@ -11,6 +12,7 @@ public class Main {
 		lyric.setPath();
 		
 		System.out.println("Loading " + lyric.getPath());
+
 	}
 	
 	//  TO-DO Integrate with Kumo (https://github.com/kennycason/kumo.git)
