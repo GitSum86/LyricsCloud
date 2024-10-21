@@ -1,0 +1,6 @@
+[submodule "lib/repo"]
+	path = lib/repo
+	url = https://github.com/kennycason/kumo.git
+[submodule "lib/kumo"]
+	path = lib/kumo
+	url = https://github.com/kennycason/kumo.git
