@@ -31,8 +31,11 @@ Project Scope
 For this graduate-level course, we will focus on developing a reliable method to extract key data from song lyrics. Our primary goals include:
 
 •	Parsing lyrics from a text file.
+
 •	Generating a data table of word frequencies.
+
 •	Creating a Word Cloud visualization based on the most frequently used words.
+
 •	Exporting the data for further analytical purposes.
 
 We will also explore other potential applications of this data and develop conceptual mock-ups to illustrate their usefulness in the music industry.
@@ -46,14 +49,19 @@ Project Objectives
 This project aims to add a new dimension to how songs are experienced and understood. By visualizing the most prominent words in a song's lyrics, listeners can gain immediate insights into its themes and messages. This tool can serve as:
 
 •	An educational resource for music students and educators.
+
 •	A means of enhancing user engagement on music platforms.
+
 •	A platform for artists to connect more deeply with their audience.
 
 How Will This Project Work?
 
 1.	Lyrics Parsing: The application will accept a text file containing the lyrics of any English song.
+
 2.	Data Processing: It will process the text to count the frequency of each word, excluding common stop words (e.g., "the," "and," "a").
+
 3.	Word Cloud Generation: Using the frequency data, the application will generate a Word Cloud where the size of each word corresponds to its frequency in the song.
+
 4.	Data Export: The frequency data can be exported as a text or CSV file for further analysis or integration with other tools.
  
 Stakeholders
@@ -61,8 +69,11 @@ Stakeholders
 Potential stakeholders include:
 
 •	Investors interested in innovative music technology products.
+
 •	Music enthusiasts and performers looking for new ways to engage with music.
+
 •	Technophiles interested in data visualization and analysis.
+
 •	Song analysts and educators who can use this tool for teaching and research purposes.
 
 Operating Environment
@@ -70,7 +81,9 @@ Operating Environment
 Initially, the application will run in a console or command prompt environment, focusing on functionality and reliability without a graphical user interface (GUI). Future iterations may include:
 
 •	Development of a GUI for a more user-friendly experience.
+
 •	Network integration to automate song search and lyrics retrieval from online databases.
+
 •	Compatibility with various operating systems and platforms.
 
 Cultural Constraints
@@ -84,5 +97,7 @@ We are aware of potential legal issues surrounding the use of song lyrics, as th
 Assumptions & Dependencies
 
 •	Lyrics Availability: Users will have access to the lyrics of the songs they wish to analyze.
+
 •	Database Integration: While we plan to integrate with song and lyric databases eventually, the current version relies on manual input.
+
 •	Technical Resources: Access to necessary development tools and resources to build and test the application is assumed.
