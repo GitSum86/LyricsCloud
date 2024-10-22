@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.net.URL;
 
+// Manages the lyrics file
 public class Lyrics {
 
     private String filename;
@@ -15,14 +16,19 @@ public class Lyrics {
     public void setPath(Scanner scanner) {
         System.out.print("Enter filename (in src/main/resources, e.g., test.txt): ");
         filename = scanner.nextLine().trim();  // Use trim() to remove any extra spaces
-
-        // Check if the file exists in the resources
+        
         if (!isValidFile(filename)) {
-            System.out.println("Invalid file name or file does not exist. Please try again.");
-            setPath(scanner); // Prompt again if invalid
+	        	System.out.println();
+	            System.out.println("Invalid file name or file does not exist. Please try again.");
+	            System.out.println();
+	            setPath(scanner); // Prompt again if invalid
         }
     }
 
+    // Returns the filename as a string
+    public String getFile() {
+    	return filename;
+    }
     // Returns the absolute file path as a string
     public String getPath() {
         // Get the URL of the resource
@@ -33,7 +39,7 @@ public class Lyrics {
         return resource.getPath();
     }
 
-    // Read the contents of the file and return it as a String
+ // Read the contents of the file and return it as a String with preserved blank lines
     public String getLyricsText() {
         StringBuilder lyrics = new StringBuilder();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
@@ -44,8 +50,20 @@ public class Lyrics {
             }
 
             String line;
+            boolean previousLineWasBlank = false;
+
             while ((line = br.readLine()) != null) {
-                lyrics.append(line).append("\n");
+                if (line.trim().isEmpty()) {
+                    if (!previousLineWasBlank) {
+                        // Append an extra newline to indicate a paragraph break
+                        lyrics.append("\n\n");
+                        previousLineWasBlank = true;
+                    }
+                    // Else, skip adding another newline to avoid multiple blank lines
+                } else {
+                    lyrics.append(line).append("\n");
+                    previousLineWasBlank = false;
+                }
             }
         } catch (IOException e) {
             System.out.println("Error reading the file: " + e.getMessage());

@@ -28,9 +28,11 @@ We are passionate about expanding our understanding of music through innovative 
 
 For this graduate-level course, we will focus on developing a reliable method to extract key data from song lyrics. Our primary goals include:
 * Parsing lyrics from a text file.
-* Generating a data table of word frequencies.
-* Creating a Word Cloud visualization based on the most frequently used words.
-* Exporting the data for further analytical purposes.
+* Generate a data table containing the word frequencies from the loaded file.
+* Creating a Word Cloud visualization based on word frequency using Kumo.
+* Uses all available Kumo shapes (Rectangle, Circle, Image Mask)
+* Shapes are resized according to configured dimensions
+* Exporting the data for further analytical purposes. (TO-DO)
 
 We will also explore other potential applications of this data and develop conceptual mock-ups to illustrate their usefulness in the music industry.
 
@@ -48,10 +50,10 @@ This project aims to add a new dimension to how songs are experienced and unders
 
 ### How Will This Project Work?
 
-- Lyrics Parsing: The application will accept a text file containing the lyrics of any English song.
-- Data Processing: It will process the text to count the frequency of each word, excluding common stop words (e.g., "the," "and," "a").
-- Word Cloud Generation: Using the frequency data, the application will generate a Word Cloud where the size of each word corresponds to its frequency in the song.
-- Data Export: The frequency data can be exported as a text or CSV file for further analysis or integration with other tools.
+* Lyrics Parsing: The application will accept a text file containing the lyrics of any English song.
+* Data Processing: It will process the text to count the frequency of each word, excluding common stop words (e.g., "the," "and," "a").
+* Word Cloud Generation: Using the frequency data, the application will generate a Word Cloud where the size of each word corresponds to its frequency in the song.
+* Data Export: The frequency data can be exported as a text or CSV file for further analysis or integration with other tools.
  
 ### Stakeholders
 
