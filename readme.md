@@ -1,4 +1,5 @@
 # Lyrics Cloud
+By Peter Wang
 
 ## Introduction
 
