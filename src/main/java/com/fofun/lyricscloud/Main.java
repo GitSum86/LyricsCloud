@@ -25,22 +25,41 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Main {
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.stage.Stage;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileOutputStream;
+
+
+public class Main extends Application {
 
     private Lyrics lyric = new Lyrics();
     private FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
     private List<WordFrequency> frequencies;
     private boolean filterStopWords = true;
     private String nextStateStopWords = "ON";
-    
+    private Scanner scanner;
+
     public static void main(String[] args) {
-        Main app = new Main();
-        app.run();
+        launch(args); // Start the JavaFX application
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Start your console application logic in a new thread
+        new Thread(this::run).start();
     }
 
     // Main application logic
     public void run() {
-   	
+        scanner = new Scanner(System.in);
         try (Scanner scanner = new Scanner(System.in)) {
             boolean exit = false;
             while (!exit) {
@@ -60,7 +79,7 @@ public class Main {
                     		nextStateStopWords = "OFF";
                     		System.out.println("Stop words WILL NOT be filtered from the analysis");
                     		loadLyrics();
-                    	} else { 
+                    	} else {
                     		filterStopWords = true;
                     		nextStateStopWords = "ON";
                     		System.out.println("Stop words WILL be filtered from the analysis");
@@ -76,6 +95,10 @@ public class Main {
                     case "5":
                         System.out.println("Exiting the application. Goodbye!");
                         exit = true;
+
+                        // Exit JavaFX and terminate JVM
+                        Platform.exit();
+                        System.exit(0);
                         break;
                     default:
                         System.out.println("Invalid choice. Please enter a number between 1 and 5.");
@@ -104,7 +127,7 @@ public class Main {
 
     // Load lyrics based on user input
     private void loadLyrics() {
-        
+
 
         System.out.println();
         System.out.println("Loading " + lyric.getPath());
@@ -138,13 +161,131 @@ public class Main {
         for (WordFrequency word : frequencies) {
             System.out.println(word.getWord() + ": " + word.getFrequency());
         }
+        System.out.println();
+
+        boolean exit = false; // initialize prompt state flag for input validation
+
+        // Ask if the user wants to visualize as a bar chart
+        System.out.print("Would you like to view a bar chart for the word frequencies? (y/n): ");
+        System.out.println();
+        while (!exit) {
+            String chartInput = scanner.nextLine().trim().toLowerCase();
+            if (chartInput.equals("y")) {
+                showBarChart(); // Displaying the bar chart
+                break;
+            }
+            if (chartInput.equals("n")) {
+                exit = true;
+            } else {
+            System.out.print("Invalid input. Please enter 'y' or 'n': ");
+            }
+        }
+
+        exit = false; // Reset prompt state flag
+
+        // Ask if the user wants to export to Excel
+        System.out.print("Would you like to export the word frequencies to an Excel spreadsheet? (y/n): ");
+        System.out.println();
+        while (!exit) {
+            String exportInput = scanner.nextLine().trim().toLowerCase();
+            if (exportInput.equals("y")) {
+                System.out.print("Enter the desired filename (without extension): ");
+                String filename = scanner.nextLine().trim();
+                exportToExcel(filename + ".xlsx");
+                break;
+            }
+            if (exportInput.equals("n")) {
+                exit = true;
+            } else {
+            System.out.print("Invalid input. Please enter 'y' or 'n': ");
+            }
+        }
     }
 
+    // Show a bar chart of word frequencies using JavaFX
+    private void showBarChart() {
+        if (frequencies == null || frequencies.isEmpty()) {
+            System.out.println("No lyrics loaded. Please load lyrics first (Option 1).");
+            return;
+        }
 
-    
+        // Use Platform.runLater to ensure the code runs on the JavaFX Application Thread
+        Platform.runLater(() -> {
+            Stage stage = new Stage();
+            stage.setTitle("Word Frequency Bar Chart");
+
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Words");
+
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Frequency");
+
+            BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+            barChart.setTitle("Word Frequency Analysis");
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Word Frequencies");
+
+            // Adding the word frequencies to the chart
+            int maxWords = 20; // Limit the number of words displayed
+            int count = 0;
+            for (WordFrequency word : frequencies) {
+                if (count >= maxWords) break;
+                series.getData().add(new XYChart.Data<>(word.getWord(), word.getFrequency()));
+                count++;
+            }
+
+            barChart.getData().add(series);
+
+            Scene scene = new Scene(barChart, 800, 600);
+            stage.setScene(scene);
+            stage.show();
+        });
+    }
+
+    // Export word frequencies to Excel
+    private void exportToExcel(String filename) {
+        if (frequencies == null || frequencies.isEmpty()) {
+            System.out.println("No lyrics loaded. Please load lyrics first (Option 1).");
+            return;
+        }
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Word Frequencies");
+
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        Cell headerCell1 = headerRow.createCell(0);
+        headerCell1.setCellValue("Word");
+        Cell headerCell2 = headerRow.createCell(1);
+        headerCell2.setCellValue("Frequency");
+
+        // Populate the rows with word frequency data
+        int rowNum = 1;
+        for (WordFrequency word : frequencies) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(word.getWord());
+            row.createCell(1).setCellValue(word.getFrequency());
+        }
+
+        // Write the output to the specified file
+        try (FileOutputStream fileOut = new FileOutputStream("src/main/output/" + filename)) {
+            workbook.write(fileOut);
+            System.out.println("Word frequencies successfully exported to " + filename);
+        } catch (IOException e) {
+            System.out.println("Error writing to Excel file: " + e.getMessage());
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                System.out.println("Error closing workbook: " + e.getMessage());
+            }
+        }
+    }
+
     // Generate a word cloud with a random background shape and save it to "src/main/output/"
     private void generateWordCloud() {
-    	
+
     	// Check whether lyrics are loaded, if not, return to main menu
         if (frequencies == null || frequencies.isEmpty()) {
             System.out.println("No lyrics loaded. Please load lyrics first using Option [1].");
@@ -199,13 +340,13 @@ public class Main {
         }
 
         // Possible Fonts
-        final Font[] FONTS = new Font[] { 
-                new Font("Lucida Sans", Font.PLAIN, Settings.getFontScalerMin()), 
+        final Font[] FONTS = new Font[] {
+                new Font("Lucida Sans", Font.PLAIN, Settings.getFontScalerMin()),
                 new Font("Comic Sans", Font.PLAIN, Settings.getFontScalerMin()),
-                new Font("Yu Gothic Light", Font.PLAIN, Settings.getFontScalerMin()), 
-                new Font("Meiryo", Font.PLAIN, Settings.getFontScalerMin()) 
+                new Font("Yu Gothic Light", Font.PLAIN, Settings.getFontScalerMin()),
+                new Font("Meiryo", Font.PLAIN, Settings.getFontScalerMin())
         };
-        
+
         // Configure the WordCloud
         Dimension dimension = new Dimension(Settings.getDimensionX(), Settings.getDimensionY());
         WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
@@ -215,15 +356,15 @@ public class Main {
         // Set a randomly selected color palette from ColorPalettes
         ColorPalette selectedPalette = ColorPalettes.getRandomColorPalette();
         wordCloud.setColorPalette(selectedPalette);
-        
+
         // Set Font Scale
         wordCloud.setFontScalar(new LinearFontScalar(Settings.getFontScalerMin(), Settings.getFontScalerMax()));
-        
+
         // Set Font Face
         Random rand = new Random();
         int randomNum = rand.nextInt(4);
         wordCloud.setKumoFont(new KumoFont(FONTS[randomNum]));
-        
+
         try {
             // Build and write the word cloud
             wordCloud.build(frequencies);
@@ -233,7 +374,7 @@ public class Main {
             System.out.println("Error generating word cloud: " + e.getMessage());
         }
     }
-     
+
 
     // Selects random image for PixelBoundaryBackground and resizes the mask according to the WordCloud Settings
     private PixelBoundaryBackground getRandomPixelBoundaryBackground() {
@@ -254,7 +395,7 @@ public class Main {
             }
 
             // List all image files
-            File[] maskFiles = backgroundsDir.listFiles((dir, name) -> 
+            File[] maskFiles = backgroundsDir.listFiles((dir, name) ->
 	            name.toLowerCase().endsWith(".png") ||
 	            name.toLowerCase().endsWith(".bmp") ||
 	            name.toLowerCase().endsWith(".jpg") ||
@@ -269,7 +410,7 @@ public class Main {
             // Randomly select a mask file
             Random random = new Random();
             File selectedMask = maskFiles[random.nextInt(maskFiles.length)];
-         
+
             // Resize the selected mask file to the dimensions of the Word Cloud (maintains aspect ratio)
             MaskLoader loader = new MaskLoader();
             ImageResizer resizer = new ImageResizer();
@@ -282,7 +423,7 @@ public class Main {
             } catch (IOException e) {
                 System.err.println("Error processing mask: " + e.getMessage());
             }
-            
+
             // Debug to announce mask filename used
             System.out.println("Using mask file: " + selectedMask.getName());
 
@@ -297,4 +438,5 @@ public class Main {
 	        }
 	        return null;
     }
+
 }
