@@ -5,6 +5,30 @@ By Peter Wang
 
 Songs serve diverse purposes, and their meanings are highly subjective—often depending on the listener's personal experiences and interpretations. Traditionally, we interpret songs primarily by how they sound: we listen to gauge their mood, vibe, and the lyrics sung. We also derive meaning by associating the music with the artist and their persona.
 
+## Installation
+
+Clone this repository to the desired location on your computer. Open the project in your IDE and using Maven run the following commands...
+
+mvn dependency:tree
+mvn clean
+mvn javafx:run
+
+## How to Load Lyrics
+
+Test lyrics are provided in src/main/resources listed as follows:
+
+test.txt
+test2.txt
+test3.txt
+test4.txt
+test5.txt
+
+Feel free to add your own lyrics text files within this folder for use in the program.
+
+## Where do Exports and Word Cloud generations save to?
+
+Go to src/main/outputs to open your spreadsheet/image.
+
 ### Purpose
 
 Early song visualizations typically involve rendering moving patterns, images, and waves based on the song's sound waves in real-time. But what if we could enhance this experience by analyzing the lyrics themselves and overlaying additional information while the song plays?
